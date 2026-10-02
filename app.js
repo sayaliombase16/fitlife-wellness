@@ -1,0 +1,24 @@
+gleNav(){document.getElementById('nav')?.classList.toggle('open')}
+function toggleTheme(){document.body.classList.toggle('darkmode');localStorage.setItem('dark',document.body.classList.contains('darkmode'))}
+document.addEventListener('DOMContentLoaded',()=>{
+ if(localStorage.getItem('dark')==='true')document.body.classList.add('darkmode');
+ const name=localStorage.getItem('fitName'); if(name){document.querySelectorAll('#userName').forEach(e=>e.textContent=name);const p=document.getElementById('profileName');if(p)p.value=name}
+ const filters=document.querySelectorAll('[data-filter]'),cards=document.querySelectorAll('.workout');
+ filters.forEach(f=>f.onclick=()=>{filters.forEach(x=>x.classList.remove('active'));f.classList.add('active');let t=f.dataset.filter;cards.forEach(c=>c.style.display=t==='all'||c.dataset.type.includes(t)?'block':'none')});
+ loadDash();
+});
+function loadDash(){let s=+localStorage.getItem('steps')||6240,w=+localStorage.getItem('water')||5,wo=+localStorage.getItem('workouts')||3,st=+localStorage.getItem('streak')||7;
+ const set=(id,v)=>{let e=document.getElementById(id);if(e)e.textContent=v};set('steps',s.toLocaleString());set('water',w+' / 8');set('workouts',wo);set('streak',st+' days');let sb=document.getElementById('stepsBar'),wb=document.getElementById('waterBar'),ob=document.getElementById('workoutBar');if(sb)sb.style.width=Math.min(s/10000*100,100)+'%';if(wb)wb.style.width=Math.min(w/8*100,100)+'%';if(ob)ob.style.width=Math.min(wo/4*100,100)+'%';let big=document.getElementById('waterBig');if(big)big.textContent=w}
+function addSteps(){localStorage.setItem('steps',( +localStorage.getItem('steps')||6240)+500);loadDash()}
+function addWater(target){let w=Math.min(8,(+localStorage.getItem('water')||5)+1);localStorage.setItem('water',w);loadDash();if(target){let e=document.getElementById(target);if(e)e.textContent=w}}
+function addWorkout(){localStorage.setItem('workouts',( +localStorage.getItem('workouts')||3)+1);loadDash();alert('Workout logged! Great work.')}
+function checkIn(){localStorage.setItem('streak',( +localStorage.getItem('streak')||7)+1);loadDash();alert('Daily check-in saved.')}
+function startWorkout(name,min){localStorage.setItem('lastWorkout',name);alert(name+' is ready!\\n\\nDuration: '+min+' minutes.\\nWarm up first and stop if you feel pain or become unwell.');}
+function habit(btn){btn.classList.toggle('done');btn.textContent=btn.classList.contains('done')?'✓ Completed':'Mark complete'}
+function calcBMI(){let w=+document.getElementById('weight').value,h=+document.getElementById('height').value/100,r=document.getElementById('bmiResult');if(!w||!h){r.textContent='Enter weight and height.';return}let b=w/(h*h);let cat=b<18.5?'Below the usual adult range':b<25?'Within the usual adult range':b<30?'Above the usual adult range':'In the obesity range';r.innerHTML='<b>BMI: '+b.toFixed(1)+'</b><br>'+cat+'<br><small>BMI is a screening measure and should be interpreted with context.</small>'}
+function calcCalories(){let a=+age.value,w=+cw.value,h=+ch.value,s=sex.value,r=calResult;if(!a||!w||!h){r.textContent='Enter all values.';return}let b=s==='male'?10*w+6.25*h-5*a+5:10*w+6.25*h-5*a-161;r.innerHTML='<b>Estimated BMR: '+Math.round(b)+' kcal/day</b><br><small>This is an educational estimate, not a personalized medical or dietary prescription.</small>'}
+let timerSec=30,timerID=null;function renderTimer(){let e=document.getElementById('timer');if(e)e.textContent='00:'+String(timerSec).padStart(2,'0')}function startTimer(){if(timerID)return;timerID=setInterval(()=>{timerSec--;renderTimer();if(timerSec<=0){clearInterval(timerID);timerID=null;alert('Interval complete!')}} ,1000)}function pauseTimer(){clearInterval(timerID);timerID=null}function resetTimer(){pauseTimer();timerSec=30;renderTimer()}
+function breath(){let c=document.getElementById('breathCircle'),t=document.getElementById('breathText');if(!c)return;c.classList.add('grow');t.textContent='Inhale slowly…';setTimeout(()=>{t.textContent='Exhale slowly…';c.classList.remove('grow')},4000);setTimeout(()=>t.textContent='One round complete. Repeat if comfortable.',8000)}
+function login(){let n=document.getElementById('loginName').value.trim(),e=document.getElementById('loginEmail').value.trim(),m=document.getElementById('loginMsg');if(!n||!e){m.textContent='Please enter your name and email.';return}localStorage.setItem('fitName',n);localStorage.setItem('fitEmail',e);m.textContent='Profile saved. Opening dashboard…';setTimeout(()=>location.href='dashboard.html',500)}
+function saveProfile(){let n=document.getElementById('profileName').value.trim();if(n)localStorage.setItem('fitName',n);document.getElementById('profileMsg').textContent='Profile saved locally.'}
+function logout(){localStorage.removeItem('fitName');localStorage.removeItem('fitEmail');location.href='index.html'}
